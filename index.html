@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="A responsive weather intelligence dashboard with current conditions and forecasts.">
+  <title>Atmos — Weather Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="Atmos home">
+        <span class="brand-mark">✳</span><span>atmos<span class="brand-dot">.</span></span>
+      </a>
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link active" href="#overview"><span>▦</span> Overview</a>
+        <a class="nav-link" href="#hourly-section"><span>◷</span> Hourly forecast</a>
+        <a class="nav-link" href="#weekly-section"><span>▤</span> 7-day forecast</a>
+        <a class="nav-link" href="#insights-section"><span>⌁</span> Weather insights</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="api-status"><span class="status-dot"></span><div><strong>Live data</strong><small>Open-Meteo API</small></div></div>
+        <p class="sidebar-note">Weather data for curious minds.</p>
+        <a class="credit-link" href="https://open-meteo.com/" target="_blank" rel="noreferrer">Weather data by Open-Meteo ↗</a>
+      </div>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="menu-toggle" aria-label="Toggle navigation">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong>Weather overview</strong></div>
+        <div class="top-actions">
+          <button class="unit-toggle" id="unit-toggle" aria-label="Toggle temperature unit"><span class="unit-active" data-unit="c">°C</span><span data-unit="f">°F</span></button>
+          <button class="icon-button" id="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">☼</button>
+          <div class="avatar" aria-label="Atmos user">A</div>
+        </div>
+      </header>
+
+      <section class="page-heading">
+        <div><p class="eyebrow">YOUR PERSONAL WEATHER STATION</p><h1>Weather overview<span class="heading-period">.</span></h1><p class="subheading">A clearer view of what's happening outside.</p></div>
+        <div class="updated-pill"><span class="status-dot"></span><span id="updated-label">Connecting to live weather…</span></div>
+      </section>
+
+      <section class="search-row" aria-label="Search for a city">
+        <form class="search-form" id="search-form">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <label class="sr-only" for="city-input">Search city</label>
+          <input id="city-input" type="search" placeholder="Search city, e.g. Bhopal, London…" autocomplete="off" required>
+          <button type="submit" id="search-button">Search <span>↗</span></button>
+        </form>
+        <button class="location-button" id="location-button"><span>◎</span> Use my location</button>
+      </section>
+      <div class="message-bar" id="message-bar" role="status" aria-live="polite" hidden></div>
+
+      <section class="dashboard-grid">
+        <article class="panel current-panel">
+          <div class="panel-topline"><span class="section-kicker">CURRENT CONDITIONS</span><span class="live-label"><span class="status-dot"></span> LIVE</span></div>
+          <div class="current-main">
+            <div class="current-copy">
+              <p class="location-line"><span>⌖</span><span id="location-name">Bhopal, India</span></p>
+              <p class="current-date" id="current-date">Loading local date…</p>
+              <div class="temperature-line"><span id="current-temp">--</span><span class="degree" id="current-degree">°C</span></div>
+              <p class="condition-text" id="current-condition">Fetching conditions…</p>
+              <p class="feels-like">Feels like <strong id="feels-like">--°</strong></p>
+            </div>
+            <div class="weather-art" id="weather-art" aria-hidden="true">☀️</div>
+          </div>
+          <div class="current-footer">
+            <div><span class="mini-icon">↗</span><span>High</span><strong id="today-high">--°</strong></div>
+            <div><span class="mini-icon">↘</span><span>Low</span><strong id="today-low">--°</strong></div>
+            <div><span class="mini-icon">☂</span><span>Rain chance</span><strong id="rain-chance">--%</strong></div>
+          </div>
+        </article>
+
+        <article class="panel snapshot-panel">
+          <div class="panel-heading"><div><span class="section-kicker">WEATHER SNAPSHOT</span><h2>Conditions at a glance</h2></div><span class="heading-icon">✳</span></div>
+          <div class="metrics-grid">
+            <div class="metric-card"><div class="metric-top"><span>Humidity</span><span>◌</span></div><strong id="humidity">--<small>%</small></strong><div class="meter"><span id="humidity-meter"></span></div><p>Relative humidity</p></div>
+            <div class="metric-card"><div class="metric-top"><span>Wind speed</span><span>↝</span></div><strong id="wind">--<small> km/h</small></strong><p id="wind-direction">Near surface</p></div>
+            <div class="metric-card"><div class="metric-top"><span>Pressure</span><span>◉</span></div><strong id="pressure">--<small> hPa</small></strong><p>Sea-level estimate</p></div>
+            <div class="metric-card"><div class="metric-top"><span>Visibility</span><span>⌁</span></div><strong id="visibility">--<small> km</small></strong><p>Estimated visibility</p></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel forecast-panel" id="hourly-section">
+        <div class="panel-heading"><div><span class="section-kicker">PLAN YOUR DAY</span><h2>Today's forecast</h2><p class="panel-description">Temperature and rain probability through the next hours.</p></div><span class="forecast-date" id="forecast-date">Today</span></div>
+        <div class="hourly-list" id="hourly-list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+        <div class="chart-wrap"><canvas id="temperature-chart" height="110" aria-label="Hourly temperature chart" role="img"></canvas></div>
+      </section>
+
+      <section class="panel weekly-panel" id="weekly-section">
+        <div class="panel-heading"><div><span class="section-kicker">THE WEEK AHEAD</span><h2>7-day forecast</h2></div><span class="muted-chip">Daily outlook</span></div>
+        <div class="weekly-list" id="weekly-list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+      </section>
+
+      <section class="insights-grid" id="insights-section">
+        <article class="panel insight-panel">
+          <div class="panel-heading"><div><span class="section-kicker">DAYLIGHT</span><h2>Sunrise & sunset</h2></div><span class="heading-icon">☼</span></div>
+          <div class="sun-track"><span class="sunrise-icon">☀</span><div class="sun-line"><span class="sun-progress"></span></div><span class="sunset-icon">◒</span></div>
+          <div class="sun-times"><div><small>Sunrise</small><strong id="sunrise">--:--</strong></div><div class="align-right"><small>Sunset</small><strong id="sunset">--:--</strong></div></div>
+          <p class="insight-note" id="daylight-note">Sunlight details for your selected location.</p>
+        </article>
+        <article class="panel insight-panel recommendation-panel">
+          <div class="panel-heading"><div><span class="section-kicker">SMART INSIGHT</span><h2>What to expect</h2></div><span class="heading-icon">✧</span></div>
+          <div class="recommendation-icon" id="insight-icon">🌤️</div>
+          <p class="recommendation-title" id="insight-title">Getting your forecast ready</p>
+          <p class="recommendation-copy" id="insight-copy">Live weather insights will appear here once the forecast loads.</p>
+        </article>
+      </section>
+
+      <footer class="footer"><span>© <span id="year"></span> Atmos Weather Intelligence</span><span>Built with HTML · CSS · JavaScript · Open-Meteo</span></footer>
+    </main>
+  </div>
+</body>
+</html>
